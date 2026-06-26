@@ -99,3 +99,70 @@ async def update_interaction(viewer_id: str, profile_id: str, body: dict):
         return dict(row)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+from app.services.scoring import score_comment, get_nudge_message
+
+
+@router.post("/score-comment")
+async def score_user_comment(body: dict):
+    """
+    Called in real time as user finishes writing a comment.
+    Returns a quality score and optional nudge before they submit.
+    """
+    comment = body.get("comment", "").strip()
+    prompt_question = body.get("prompt_question", "")
+    prompt_answer = body.get("prompt_answer", "")
+    viewer_id = body.get("viewer_id")
+    profile_id = body.get("profile_id")
+
+    if not comment or not prompt_question or not prompt_answer:
+        raise HTTPException(
+            status_code=400,
+            detail="comment, prompt_question, and prompt_answer are required",
+        )
+
+    word_count = len(comment.split())
+    if word_count < 15:
+        raise HTTPException(
+            status_code=400, detail=f"Comment too short: {word_count} words, minimum 15"
+        )
+
+    try:
+        result = await score_comment(comment, prompt_question, prompt_answer)
+        nudge = get_nudge_message(result)
+
+        # Store the score if we have interaction context
+        if viewer_id and profile_id:
+            db = await get_db()
+            await db.execute(
+                """
+                UPDATE discovery_interactions
+                SET comment_score = $1,
+                    comment_score_reasoning = $2,
+                    comment_nudge_shown = $3,
+                    scored_at = NOW()
+                WHERE viewer_id = $4::uuid AND profile_id = $5::uuid
+            """,
+                result["overall"],
+                result["reasoning"],
+                nudge is not None,
+                viewer_id,
+                profile_id,
+            )
+
+        return {
+            "scores": {
+                "specificity": result["specificity"],
+                "genuine_engagement": result["genuine_engagement"],
+                "overall": result["overall"],
+            },
+            "reasoning": result["reasoning"],
+            "nudge": nudge,
+            "show_nudge": nudge is not None,
+        }
+
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=500, detail="Failed to parse scoring response")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
