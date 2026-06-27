@@ -7,7 +7,6 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Fake profiles from the spec doc
 PROFILES = [
     {
         "name": "Maya R.",
@@ -16,33 +15,34 @@ PROFILES = [
         "looking_for": "relationship",
         "location_text": "2 miles away",
         "audio_duration": 22,
-        "dealbreaker_tags": ["wants_kids_eventually", "non_smoker", "within_25_miles"],
+        "audio_prompt": "What did you actually do last weekend — not the highlight, just the whole thing?",
+        "dealbreaker_tags": ["wants kids eventually", "non-smoker", "within 25 miles"],
         "prompts": [
             {
                 "stage": "discovery",
                 "order": 1,
                 "question": "The most uncomfortable thing I've done this year was...",
-                "answer": "Quit a job I was good at because it was making me someone I didn't like. Took three weeks to tell anyone.",
+                "answer": "Quit a job I was good at because it was making me someone I didn't like. Took three weeks to tell anyone."
             },
             {
                 "stage": "discovery",
                 "order": 2,
-                "question": "You'll know we're compatible if...",
-                "answer": "You think silence is underrated and you don't need to fill every moment with noise.",
+                "question": "If I'm being honest about what I want right now...",
+                "answer": "Something real. Not in a rush, but not interested in a pen pal either. I've done situationships and I'm done."
             },
             {
                 "stage": "post_match",
                 "order": 1,
-                "question": "The opinion I hold that most people disagree with is...",
-                "answer": "Most people are more interesting in person than they think they are, and less interesting online than they pretend to be.",
+                "question": "Something I'm genuinely working on...",
+                "answer": "Saying what I actually want instead of what I think sounds reasonable. Working on it."
             },
             {
                 "stage": "post_match",
                 "order": 2,
-                "question": "Right now I'm looking for...",
-                "answer": "Something real. Not in a rush, but not interested in a pen pal either.",
-            },
-        ],
+                "question": "Something I believe that's harder to live by than it sounds...",
+                "answer": "Most people are more interesting in person than they think they are. I try to remember that."
+            }
+        ]
     },
     {
         "name": "Jordan K.",
@@ -51,37 +51,34 @@ PROFILES = [
         "looking_for": "relationship",
         "location_text": "5 miles away",
         "audio_duration": 20,
-        "dealbreaker_tags": [
-            "looking_for_relationship",
-            "dog_friendly",
-            "no_long_distance",
-        ],
+        "audio_prompt": "Tell me something you're looking forward to in the next few weeks.",
+        "dealbreaker_tags": ["looking for relationship", "dog friendly", "no long distance"],
         "prompts": [
             {
                 "stage": "discovery",
                 "order": 1,
                 "question": "The last thing that genuinely surprised me was...",
-                "answer": "A student who hated reading all year handed me a three-page letter on the last day of school. I had to step into the hallway.",
+                "answer": "A student who hated reading all year handed me a three-page letter on the last day of school. I had to step into the hallway."
             },
             {
                 "stage": "discovery",
                 "order": 2,
-                "question": "A non-negotiable in my life is...",
-                "answer": "At least one meal a week that takes longer than 20 minutes to make. Cooking is how I decompress.",
+                "question": "What actually brought me here is...",
+                "answer": "I want someone I'd actually want to tell about my day. That sounds simple but it's apparently not."
             },
             {
                 "stage": "post_match",
                 "order": 1,
-                "question": "My version of a perfect weekend involves...",
-                "answer": "Farmer's market Saturday morning, something that gets me outside in the afternoon, dinner with people who don't look at their phones.",
+                "question": "Something I'm genuinely working on...",
+                "answer": "Leaving work at work. I care a lot about my students and it follows me home more than it should."
             },
             {
                 "stage": "post_match",
                 "order": 2,
-                "question": "I'm genuinely bad at...",
-                "answer": "Leaving a bookstore without buying something. My apartment has a structural book problem.",
-            },
-        ],
+                "question": "Something I believe that's harder to live by than it sounds...",
+                "answer": "That how you do small things is how you do everything. I try to remember that when I'm losing patience."
+            }
+        ]
     },
     {
         "name": "Priya S.",
@@ -90,33 +87,34 @@ PROFILES = [
         "looking_for": "relationship",
         "location_text": "8 miles away",
         "audio_duration": 18,
-        "dealbreaker_tags": ["non_smoker", "open_to_kids", "active_lifestyle"],
+        "audio_prompt": "Describe something small that made you happy recently.",
+        "dealbreaker_tags": ["non-smoker", "open to kids", "active lifestyle"],
         "prompts": [
             {
                 "stage": "discovery",
                 "order": 1,
                 "question": "Something most people don't know about me is...",
-                "answer": "I used to do competitive swimming. Stopped at 18 and sometimes I miss it in a way that's hard to explain.",
+                "answer": "I used to do competitive swimming. Stopped at 18 and sometimes I miss it in a way that's hard to explain."
             },
             {
                 "stage": "discovery",
                 "order": 2,
-                "question": "The conversation I want to have on a first date is...",
-                "answer": "Not 'what do you do' — I want to know what you were obsessed with at 14 and whether any of it stuck.",
+                "question": "The kind of connection I'm ready for is...",
+                "answer": "Something I'd still want to be in after the first date nerves wear off. I'm not here to collect matches."
             },
             {
                 "stage": "post_match",
                 "order": 1,
-                "question": "I'm actively trying to get better at...",
-                "answer": "Saying what I actually want instead of what I think sounds reasonable. Working on it.",
+                "question": "Something I'm genuinely working on...",
+                "answer": "Saying what I actually want instead of what I think sounds reasonable. Working on it."
             },
             {
                 "stage": "post_match",
                 "order": 2,
-                "question": "Right now I'm looking for...",
-                "answer": "Someone I'd want to still be talking to after the first date nerves wear off.",
-            },
-        ],
+                "question": "One thing I won't compromise on...",
+                "answer": "Intellectual curiosity. Doesn't matter what the things are — just that there are things you care about."
+            }
+        ]
     },
     {
         "name": "Marcus T.",
@@ -125,33 +123,34 @@ PROFILES = [
         "looking_for": "relationship",
         "location_text": "3 miles away",
         "audio_duration": 24,
-        "dealbreaker_tags": ["wants_kids", "relationship_focused", "within_30_miles"],
+        "audio_prompt": "What's something you've been thinking about a lot lately?",
+        "dealbreaker_tags": ["wants kids", "relationship-focused", "within 30 miles"],
         "prompts": [
             {
                 "stage": "discovery",
                 "order": 1,
-                "question": "The thing I'm most proud of that's not on my resume is...",
-                "answer": "Teaching my dad to video call. Took four weekends. Worth every minute.",
+                "question": "Something I'm quietly proud of that isn't on my resume...",
+                "answer": "Teaching my dad to video call. Took four weekends. Worth every minute."
             },
             {
                 "stage": "discovery",
                 "order": 2,
-                "question": "You'll know we click if...",
-                "answer": "You have opinions about things. Doesn't matter what — food, films, the best way to spend a Sunday. I like someone who's thought about it.",
+                "question": "Right now I'm looking for...",
+                "answer": "Someone ready for something real who doesn't need to play it cool about it. I'm not playing it cool either."
             },
             {
                 "stage": "post_match",
                 "order": 1,
-                "question": "One thing I believe that's harder to live by than it sounds is...",
-                "answer": "That how you do small things is how you do everything. I try to remember that when I'm losing patience.",
+                "question": "Something I'm genuinely working on...",
+                "answer": "Slowing down. I build things for a living and I have to remind myself relationships aren't construction projects."
             },
             {
                 "stage": "post_match",
                 "order": 2,
-                "question": "I'm looking for someone who...",
-                "answer": "Is ready for something real and doesn't need to play it cool about it.",
-            },
-        ],
+                "question": "Something I believe that's harder to live by than it sounds...",
+                "answer": "That how you do small things is how you do everything. I try to remember that when I'm losing patience."
+            }
+        ]
     },
     {
         "name": "Elena W.",
@@ -160,34 +159,35 @@ PROFILES = [
         "looking_for": "relationship",
         "location_text": "6 miles away",
         "audio_duration": 21,
-        "dealbreaker_tags": ["open_about_kids", "non_smoker", "emotionally_available"],
+        "audio_prompt": "What's something you do that most people your age don't?",
+        "dealbreaker_tags": ["open about kids", "non-smoker", "emotionally available"],
         "prompts": [
             {
                 "stage": "discovery",
                 "order": 1,
                 "question": "A small thing that means a lot to me is...",
-                "answer": "When someone remembers something specific you mentioned weeks ago and brings it up like it mattered. Because it did.",
+                "answer": "When someone remembers something specific you mentioned weeks ago and brings it up like it mattered. Because it did."
             },
             {
                 "stage": "discovery",
                 "order": 2,
-                "question": "The last time I was genuinely out of my comfort zone was...",
-                "answer": "Solo trip to Portugal last October. Terrified the whole flight. Didn't want to leave.",
+                "question": "If I'm being honest about what I want right now...",
+                "answer": "A person, not a project. Someone with their own life who wants to share it. I'm not looking to be someone's fixer-upper either."
             },
             {
                 "stage": "post_match",
                 "order": 1,
-                "question": "My love language in practice looks like...",
-                "answer": "Sending you an article at 11pm because it made me think of something you said. Making sure you ate. Showing up.",
+                "question": "Something I'm genuinely working on...",
+                "answer": "Not taking work home with me emotionally. Long shifts make that hard. I'm better at it than I used to be."
             },
             {
                 "stage": "post_match",
                 "order": 2,
-                "question": "What I'm actually looking for is...",
-                "answer": "A person, not a project. Someone with their own life who wants to share it.",
-            },
-        ],
-    },
+                "question": "Something I've learned I need in a relationship...",
+                "answer": "Someone who can be emotionally present. Not perfect — just present and trying."
+            }
+        ]
+    }
 ]
 
 
@@ -201,8 +201,8 @@ async def seed():
     for profile in PROFILES:
         user_id = await conn.fetchval(
             """
-            INSERT INTO users (name, age, occupation, looking_for, location_text, audio_duration, dealbreaker_tags)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            INSERT INTO users (name, age, occupation, looking_for, location_text, audio_duration, audio_prompt, dealbreaker_tags)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING id
         """,
             profile["name"],
@@ -211,6 +211,7 @@ async def seed():
             profile["looking_for"],
             profile["location_text"],
             profile["audio_duration"],
+            profile["audio_prompt"],
             profile["dealbreaker_tags"],
         )
 
