@@ -1,5 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap");
-
+/* Replace the current @import with this */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap');
 :root {
   --bg: #f7f3ee;
   --surface: #ffffff;
@@ -18,8 +18,8 @@
   --radius-lg: 24px;
   --shadow-sm: 0 1px 3px rgba(28, 25, 23, 0.06);
   --shadow-md: 0 4px 16px rgba(28, 25, 23, 0.08);
-  --font-display: "DM Serif Display", Georgia, serif;
-  --font-body: "Inter", system-ui, sans-serif;
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
 }
 
 * {
@@ -43,4 +43,15 @@ h3 {
   font-family: var(--font-display);
   font-weight: 400;
   line-height: 1.2;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
