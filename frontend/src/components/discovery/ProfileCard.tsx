@@ -16,7 +16,15 @@ interface Profile {
   occupation: string
   location_text: string
   audio_duration: number
-  dealbreaker_tags: string[]
+  audio_prompt: string
+  dating_intention: string
+  politics: string
+  sexuality: string
+  has_kids: string
+  drinking: string
+  smoking: string
+  religion: string
+  astrology_sign: string
   prompts: Prompt[]
 }
 
@@ -25,19 +33,94 @@ interface ProfileCardProps {
   viewerId: string
 }
 
+const ASTROLOGY_SYMBOLS: Record<string, string> = {
+  Aries: '♈',
+  Taurus: '♉',
+  Gemini: '♊',
+  Cancer: '♋',
+  Leo: '♌',
+  Virgo: '♍',
+  Libra: '♎',
+  Scorpio: '♏',
+  Sagittarius: '♐',
+  Capricorn: '♑',
+  Aquarius: '♒',
+  Pisces: '♓',
+}
+
+function Chip({ label, accent = false }: { label: string; accent?: boolean }) {
+  return (
+    <span
+      style={{
+        fontSize: '12px',
+        color: accent ? 'var(--accent)' : 'var(--text-secondary)',
+        background: accent ? 'var(--accent-light)' : 'var(--bg)',
+        border: `1px solid ${accent ? 'var(--accent)' : 'var(--border)'}`,
+        borderRadius: '20px',
+        padding: '4px 12px',
+        display: 'inline-block',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {label}
+    </span>
+  )
+}
+
+function SectionDivider({ label }: { label?: string }) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+        margin: '24px 0',
+      }}
+    >
+      {label && (
+        <span
+          style={{
+            fontSize: '10px',
+            color: 'var(--text-muted)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {label}
+        </span>
+      )}
+      <div
+        style={{
+          flex: 1,
+          height: '1px',
+          background: 'var(--border)',
+        }}
+      />
+    </div>
+  )
+}
+
 export function ProfileCard({ profile, viewerId }: ProfileCardProps) {
   const [audioCompleted, setAudioCompleted] = useState(false)
   const [commentReady, setCommentReady] = useState(false)
   const [showPhotos, setShowPhotos] = useState(false)
 
   const discoveryPrompts = [...(profile.prompts || [])]
-    .filter((p) => p.stage === 'discovery' || !p.stage)
+    .filter((p) => p.stage === 'discovery')
+    .sort((a, b) => a.order - b.order)
+
+  const postMatchPrompts = [...(profile.prompts || [])]
+    .filter((p) => p.stage === 'post_match')
     .sort((a, b) => a.order - b.order)
 
   const prompt1 = discoveryPrompts[0]
   const prompt2 = discoveryPrompts[1]
+  const tier2Prompt1 = postMatchPrompts[0]
+  const tier2Prompt2 = postMatchPrompts[1]
 
   const firstName = profile.name.split(' ')[0]
+  const astrologySymbol = ASTROLOGY_SYMBOLS[profile.astrology_sign] || '✦'
 
   return (
     <div
@@ -47,55 +130,32 @@ export function ProfileCard({ profile, viewerId }: ProfileCardProps) {
         boxShadow: 'var(--shadow-md)',
         overflow: 'hidden',
         marginBottom: '24px',
-        position: 'relative',
         borderTop: '3px solid var(--accent)',
       }}
     >
-      {/* Blurred photo background — presence signal only, 15% opacity */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '160px',
-          background:
-            'linear-gradient(135deg, #D4B8A8 0%, #C4A898 50%, #B89888 100%)',
-          opacity: 0.15,
-          filter: 'blur(8px)',
-          zIndex: 0,
-        }}
-      />
-
-      {/* Header — name, age, distance, occupation, request counter */}
-      <div
-        style={{
-          position: 'relative',
-          zIndex: 1,
-          padding: '24px 24px 20px',
-        }}
-      >
+      {/* ── HEADER ── */}
+      <div style={{ padding: '24px 24px 0' }}>
         <div
           style={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'flex-start',
+            marginBottom: '16px',
           }}
         >
           <div>
-            {/* Primary identity — name age distance */}
             <div
               style={{
                 display: 'flex',
                 alignItems: 'baseline',
-                gap: '6px',
+                gap: '8px',
                 marginBottom: '4px',
               }}
             >
               <h2
                 style={{
                   fontFamily: 'var(--font-display)',
-                  fontSize: '24px',
+                  fontSize: '26px',
                   color: 'var(--text-primary)',
                   fontWeight: '400',
                 }}
@@ -104,7 +164,7 @@ export function ProfileCard({ profile, viewerId }: ProfileCardProps) {
               </h2>
               <span
                 style={{
-                  fontSize: '20px',
+                  fontSize: '22px',
                   color: 'var(--text-secondary)',
                   fontFamily: 'var(--font-display)',
                   fontWeight: '400',
@@ -116,24 +176,16 @@ export function ProfileCard({ profile, viewerId }: ProfileCardProps) {
                 style={{
                   fontSize: '13px',
                   color: 'var(--text-muted)',
-                  marginLeft: '4px',
                 }}
               >
                 · {profile.location_text}
               </span>
             </div>
-
-            {/* Occupation — small chip, not prominent */}
             {profile.occupation && (
               <span
                 style={{
                   fontSize: '12px',
                   color: 'var(--text-muted)',
-                  background: 'var(--bg)',
-                  border: '1px solid var(--border)',
-                  borderRadius: '20px',
-                  padding: '2px 10px',
-                  display: 'inline-block',
                 }}
               >
                 {profile.occupation}
@@ -141,36 +193,69 @@ export function ProfileCard({ profile, viewerId }: ProfileCardProps) {
             )}
           </div>
 
-          {/* Blurred avatar — presence signal only */}
+          {/* Astrology sign — replaces blurred avatar */}
           <div
             style={{
-              width: '52px',
-              height: '52px',
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #D4B8A8, #B89888)',
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'center',
-              filter: 'blur(4px)',
-              opacity: 0.5,
-              flexShrink: 0,
+              gap: '2px',
             }}
-          />
+          >
+            <span
+              style={{
+                fontSize: '28px',
+                lineHeight: 1,
+                color: 'var(--accent)',
+                opacity: 0.7,
+              }}
+            >
+              {astrologySymbol}
+            </span>
+            <span
+              style={{
+                fontSize: '10px',
+                color: 'var(--text-muted)',
+                letterSpacing: '0.05em',
+              }}
+            >
+              {profile.astrology_sign}
+            </span>
+          </div>
+        </div>
+
+        {/* ── DEALBREAKERS ── dating intention · politics · sexuality */}
+        <div
+          style={{
+            display: 'flex',
+            gap: '6px',
+            flexWrap: 'wrap',
+            paddingBottom: '20px',
+            borderBottom: '1px solid var(--border)',
+          }}
+        >
+          {profile.dating_intention && (
+            <Chip label={profile.dating_intention} accent={true} />
+          )}
+          {profile.politics && <Chip label={profile.politics} />}
+          {profile.sexuality && profile.sexuality !== 'Straight' && (
+            <Chip label={profile.sexuality} />
+          )}
         </div>
       </div>
 
-      {/* Card body */}
-      <div style={{ padding: '24px', position: 'relative', zIndex: 1 }}>
-        {/* Prompt 1 — personality/story — full visual weight */}
+      {/* ── CARD BODY ── */}
+      <div style={{ padding: '0 24px 24px' }}>
+        {/* ── PROMPT 1 — personality/story ── */}
         {prompt1 && (
-          <div style={{ marginBottom: '24px' }}>
+          <div style={{ padding: '24px 0' }}>
             <p
               style={{
                 fontSize: '11px',
                 color: 'var(--text-muted)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.07em',
-                marginBottom: '8px',
+                marginBottom: '10px',
                 fontStyle: 'italic',
               }}
             >
@@ -181,8 +266,8 @@ export function ProfileCard({ profile, viewerId }: ProfileCardProps) {
                 fontSize: '17px',
                 color: 'var(--text-primary)',
                 lineHeight: '1.65',
+                fontFamily: 'var(--font-display)',
                 fontWeight: '400',
-                fontStyle: 'normal',
               }}
             >
               {prompt1.answer}
@@ -190,16 +275,9 @@ export function ProfileCard({ profile, viewerId }: ProfileCardProps) {
           </div>
         )}
 
-        {/* Divider */}
-        <div
-          style={{
-            height: '1px',
-            background: 'var(--border)',
-            margin: '0 0 24px',
-          }}
-        />
+        <SectionDivider />
 
-        {/* Prompt 2 — intention/readiness — slightly secondary weight */}
+        {/* ── PROMPT 2 — intention/readiness ── */}
         {prompt2 && (
           <div style={{ marginBottom: '24px' }}>
             <p
@@ -208,7 +286,7 @@ export function ProfileCard({ profile, viewerId }: ProfileCardProps) {
                 color: 'var(--text-muted)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.07em',
-                marginBottom: '8px',
+                marginBottom: '10px',
                 fontStyle: 'italic',
               }}
             >
@@ -226,17 +304,31 @@ export function ProfileCard({ profile, viewerId }: ProfileCardProps) {
           </div>
         )}
 
-        {/* Divider */}
+        <SectionDivider label="Also worth knowing" />
+
+        {/* ── PREFERENCES — kids · drinking/smoking · religion ── */}
         <div
           style={{
-            height: '1px',
-            background: 'var(--border)',
-            margin: '0 0 24px',
+            display: 'flex',
+            gap: '6px',
+            flexWrap: 'wrap',
+            marginBottom: '24px',
           }}
-        />
+        >
+          {profile.has_kids && <Chip label={profile.has_kids} />}
+          {profile.drinking && profile.drinking !== 'Socially' && (
+            <Chip label={`Drinks ${profile.drinking.toLowerCase()}`} />
+          )}
+          {profile.smoking && profile.smoking !== 'Never' && (
+            <Chip label={`Smokes ${profile.smoking.toLowerCase()}`} />
+          )}
+          {profile.religion && <Chip label={profile.religion} />}
+        </div>
 
-        {/* Audio player */}
-        <div style={{ marginBottom: audioCompleted ? '24px' : '0' }}>
+        <SectionDivider />
+
+        {/* ── AUDIO ── */}
+        <div>
           <p
             style={{
               fontSize: '11px',
@@ -253,7 +345,6 @@ export function ProfileCard({ profile, viewerId }: ProfileCardProps) {
             onComplete={() => setAudioCompleted(true)}
             onProgress={() => {}}
           />
-          {/* Audio prompt question — shown under player */}
           <p
             style={{
               fontSize: '12px',
@@ -263,62 +354,14 @@ export function ProfileCard({ profile, viewerId }: ProfileCardProps) {
               textAlign: 'center',
             }}
           >
-            "What did you actually do last weekend — not the highlight, just the
-            whole thing?"
+            "{profile.audio_prompt}"
           </p>
         </div>
 
-        {/* Tier 2 content + comment box — slides in after audio completes */}
+        {/* ── TIER 2 + COMMENT — slides in after audio ── */}
         {audioCompleted && !commentReady && (
-          <div
-            style={{
-              animation: 'fadeSlideIn 0.3s ease forwards',
-            }}
-          >
-            {/* Divider */}
-            <div
-              style={{
-                height: '1px',
-                background: 'var(--border)',
-                margin: '0 0 24px',
-              }}
-            />
-
-            {/* Tier 2 — emotional availability prompt */}
-            <div
-              style={{
-                background: 'var(--bg)',
-                borderRadius: 'var(--radius-md)',
-                padding: '16px',
-                marginBottom: '16px',
-              }}
-            >
-              <p
-                style={{
-                  fontSize: '11px',
-                  color: 'var(--text-muted)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.07em',
-                  marginBottom: '8px',
-                  fontStyle: 'italic',
-                }}
-              >
-                Something I'm genuinely working on...
-              </p>
-              <p
-                style={{
-                  fontSize: '14px',
-                  color: 'var(--text-secondary)',
-                  lineHeight: '1.6',
-                }}
-              >
-                {/* Will come from post_match prompts in later iteration */}
-                Saying what I actually want instead of what I think sounds
-                reasonable.
-              </p>
-            </div>
-
-            {/* Comment box */}
+          <div style={{ animation: 'fadeSlideIn 0.3s ease forwards' }}>
+            <SectionDivider />
             <CommentBox
               viewerId={viewerId}
               profileId={profile.id}
@@ -332,35 +375,20 @@ export function ProfileCard({ profile, viewerId }: ProfileCardProps) {
           </div>
         )}
 
-        {/* Photo reveal */}
+        {/* ── PHOTO REVEAL ── */}
         {showPhotos && (
-          <div
-            style={{
-              marginTop: '24px',
-              animation: 'fadeSlideIn 0.4s ease forwards',
-            }}
-          >
-            <div
-              style={{
-                height: '1px',
-                background: 'var(--border)',
-                marginBottom: '24px',
-              }}
-            />
-
+          <div style={{ animation: 'fadeSlideIn 0.4s ease forwards' }}>
+            <SectionDivider />
             <p
               style={{
                 fontSize: '13px',
                 color: 'var(--text-secondary)',
                 textAlign: 'center',
                 marginBottom: '16px',
-                letterSpacing: '0.01em',
               }}
             >
               Here's the rest of their profile
             </p>
-
-            {/* 2-up photo grid */}
             <div
               style={{
                 display: 'grid',
@@ -369,40 +397,26 @@ export function ProfileCard({ profile, viewerId }: ProfileCardProps) {
                 marginBottom: '20px',
               }}
             >
-              <div
-                style={{
-                  aspectRatio: '3/4',
-                  background: 'linear-gradient(160deg, #E8DDD5, #D4C4B8)',
-                  borderRadius: 'var(--radius-sm)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--text-muted)',
-                  fontSize: '12px',
-                }}
-              >
-                face photo
-              </div>
-              <div
-                style={{
-                  aspectRatio: '3/4',
-                  background: 'linear-gradient(160deg, #D4C4B8, #C4B4A8)',
-                  borderRadius: 'var(--radius-sm)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--text-muted)',
-                  fontSize: '12px',
-                }}
-              >
-                context photo
-              </div>
+              {['face photo', 'context photo'].map((label) => (
+                <div
+                  key={label}
+                  style={{
+                    aspectRatio: '3/4',
+                    background: 'linear-gradient(160deg, #E8DDD5, #D4C4B8)',
+                    borderRadius: 'var(--radius-sm)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--text-muted)',
+                    fontSize: '12px',
+                  }}
+                >
+                  {label}
+                </div>
+              ))}
             </div>
-
-            {/* Confirmation buttons */}
             <div style={{ display: 'flex', gap: '10px' }}>
               <button
-                onClick={() => setShowPhotos(false)}
                 style={{
                   flex: 1,
                   padding: '14px',
@@ -429,7 +443,6 @@ export function ProfileCard({ profile, viewerId }: ProfileCardProps) {
                   fontWeight: '500',
                   color: 'white',
                   cursor: 'pointer',
-                  letterSpacing: '0.01em',
                 }}
               >
                 Send request →

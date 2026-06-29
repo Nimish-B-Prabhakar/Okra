@@ -23,15 +23,23 @@ async def get_discovery_feed(user_id: str, limit: int = 10):
             u.location_text,
             u.audio_url,
             u.audio_duration,
-            u.dealbreaker_tags,
-            -- discovery prompts only, not post_match prompts
+            u.audio_prompt,
+            u.dating_intention,
+            u.politics,
+            u.sexuality,
+            u.has_kids,
+            u.drinking,
+            u.smoking,
+            u.religion,
+            u.astrology_sign,
             json_agg(
                 json_build_object(
                     'question', up.prompt_question,
                     'answer', up.prompt_answer,
-                    'order', up.display_order
-                ) ORDER BY up.display_order
-            ) FILTER (WHERE up.display_stage = 'discovery') AS prompts
+                    'order', up.display_order,
+                    'stage', up.display_stage
+                ) ORDER BY up.display_order, up.display_order
+            ) AS prompts
         FROM users u
         LEFT JOIN user_prompts up ON up.user_id = u.id
         WHERE

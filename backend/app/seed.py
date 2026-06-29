@@ -12,11 +12,17 @@ PROFILES = [
         "name": "Maya R.",
         "age": 27,
         "occupation": "Product designer",
-        "looking_for": "relationship",
         "location_text": "2 miles away",
         "audio_duration": 22,
         "audio_prompt": "What did you actually do last weekend — not the highlight, just the whole thing?",
-        "dealbreaker_tags": ["wants kids eventually", "non-smoker", "within 25 miles"],
+        "dating_intention": "Something long-term",
+        "politics": "Liberal",
+        "sexuality": "Straight",
+        "has_kids": "No kids, open to them",
+        "drinking": "Socially",
+        "smoking": "Never",
+        "religion": "Agnostic",
+        "astrology_sign": "Scorpio",
         "prompts": [
             {
                 "stage": "discovery",
@@ -48,11 +54,17 @@ PROFILES = [
         "name": "Jordan K.",
         "age": 29,
         "occupation": "High school English teacher",
-        "looking_for": "relationship",
         "location_text": "5 miles away",
         "audio_duration": 20,
         "audio_prompt": "Tell me something you're looking forward to in the next few weeks.",
-        "dealbreaker_tags": ["looking for relationship", "dog friendly", "no long distance"],
+        "dating_intention": "Life partner",
+        "politics": "Progressive",
+        "sexuality": "Straight",
+        "has_kids": "No kids, want them someday",
+        "drinking": "Rarely",
+        "smoking": "Never",
+        "religion": "Spiritual but not religious",
+        "astrology_sign": "Virgo",
         "prompts": [
             {
                 "stage": "discovery",
@@ -84,11 +96,17 @@ PROFILES = [
         "name": "Priya S.",
         "age": 26,
         "occupation": "Data analyst",
-        "looking_for": "relationship",
         "location_text": "8 miles away",
         "audio_duration": 18,
         "audio_prompt": "Describe something small that made you happy recently.",
-        "dealbreaker_tags": ["non-smoker", "open to kids", "active lifestyle"],
+        "dating_intention": "Something long-term",
+        "politics": "Liberal",
+        "sexuality": "Bisexual",
+        "has_kids": "No kids, open to them",
+        "drinking": "Socially",
+        "smoking": "Never",
+        "religion": "Hindu",
+        "astrology_sign": "Cancer",
         "prompts": [
             {
                 "stage": "discovery",
@@ -120,11 +138,17 @@ PROFILES = [
         "name": "Marcus T.",
         "age": 31,
         "occupation": "Civil engineer",
-        "looking_for": "relationship",
         "location_text": "3 miles away",
         "audio_duration": 24,
         "audio_prompt": "What's something you've been thinking about a lot lately?",
-        "dealbreaker_tags": ["wants kids", "relationship-focused", "within 30 miles"],
+        "dating_intention": "Life partner",
+        "politics": "Moderate",
+        "sexuality": "Straight",
+        "has_kids": "No kids, want them",
+        "drinking": "Socially",
+        "smoking": "Never",
+        "religion": "Christian — Protestant",
+        "astrology_sign": "Taurus",
         "prompts": [
             {
                 "stage": "discovery",
@@ -156,11 +180,17 @@ PROFILES = [
         "name": "Elena W.",
         "age": 28,
         "occupation": "Nurse practitioner",
-        "looking_for": "relationship",
         "location_text": "6 miles away",
         "audio_duration": 21,
         "audio_prompt": "What's something you do that most people your age don't?",
-        "dealbreaker_tags": ["open about kids", "non-smoker", "emotionally available"],
+        "dating_intention": "Something long-term",
+        "politics": "Liberal",
+        "sexuality": "Straight",
+        "has_kids": "No kids, open to them",
+        "drinking": "Rarely",
+        "smoking": "Never",
+        "religion": "Spiritual but not religious",
+        "astrology_sign": "Pisces",
         "prompts": [
             {
                 "stage": "discovery",
@@ -190,7 +220,6 @@ PROFILES = [
     }
 ]
 
-
 async def seed():
     conn = await asyncpg.connect(DATABASE_URL)
 
@@ -201,18 +230,27 @@ async def seed():
     for profile in PROFILES:
         user_id = await conn.fetchval(
             """
-            INSERT INTO users (name, age, occupation, looking_for, location_text, audio_duration, audio_prompt, dealbreaker_tags)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            INSERT INTO users (name, age, occupation, location_text,
+            audio_duration, audio_prompt,
+            dating_intention, politics, sexuality,
+            has_kids, drinking, smoking, religion, astrology_sign)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
             RETURNING id
         """,
             profile["name"],
             profile["age"],
             profile["occupation"],
-            profile["looking_for"],
             profile["location_text"],
             profile["audio_duration"],
             profile["audio_prompt"],
-            profile["dealbreaker_tags"],
+            profile["dating_intention"],
+            profile["politics"],
+            profile["sexuality"],
+            profile["has_kids"],
+            profile["drinking"],
+            profile["smoking"],
+            profile["religion"],
+            profile["astrology_sign"],
         )
 
         for prompt in profile["prompts"]:
