@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import init_db
-from app.routers import discovery, requests
+from app.routers import discovery, requests, research
+
 
 app = FastAPI(title="Okra API", version="0.1.0")
 
@@ -26,3 +27,4 @@ async def health():
 
 app.include_router(discovery.router, prefix="/api/discovery", tags=["discovery"])
 app.include_router(requests.router, prefix="/api/requests", tags=["requests"])
+app.include_router(research.router, prefix="/api/research", tags=["research"])
